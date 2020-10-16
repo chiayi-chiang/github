@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>聊天室</title>
+    <script src="JavaScripts/jquery-3.2.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js"></script>
+    <link rel="stylesheet" href="stylesheets/bootstrap.css">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="JavaScripts/bootstrap.js"></script> 
+    <script src="JavaScripts/touXiang.js" ></script>
+    <script src="JavaScripts/Allfunction.js" ></script>
+    <script src="JavaScripts/main.js" ></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://at.alicdn.com/t/font_o86wdrgtu766r.js"></script>
+</head>
+<body>
+<!-- 登入頁面 -->
+    <div id="loginbox" class="loginbox">
+        <h1>聊天室</h1>
+        <hr>
+        <div class="login">
+            <div class="form-inline">
+                <div class="form-group">
+                    <label>使用者名稱</label>
+                    <input type="text" class="form-control" id="userName" placeholder="請輸入使用者名稱">
+                </div>
+                <br><br>
+                <div class="form-group">
+                    <label>使用者密碼</label>
+                    <input type="text" class="form-control" id="userPassword" placeholder="請輸入使用者密碼">
+                </div>
+                <br><br>
+                <button type="button" class="btn btn-info btn-lg" id="loginbutton">登入</button>
+            </div>
+        </div>
+    </div>
+    <!-- 大廳chatbox -->
+    <div style="display: none;" id="publicchatbox" class="publicchatbox">
+        <div id="usergroup" class="col-md-2 position: fixed;" >
+            <span  class="label label-primary" style="font-size: 2em;background-color:#2e6da4;">聊天室</span>
+            <div class="list-room"></div>
+        </div>
+        <div class="col-md-8 chatwindow  ">
+            <div id="content" style="background-color:LightSlateGrey; opacity: 0.8;">
+                <div id="innerContent" ></div>
+            </div>
+            <div id="inputgrop">
+                <!-- 聊天室輸入匡 -->
+                <div class="col-md-10" >
+                    <input type="text" placeholder="saying somgthing" class="form-control chatinput" id="chatinput"> 
+                </div> 
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-primary " id="chatinputbutton">發送訊息</button>
+                </div>
+            </div>
+        </div>
+        <div id="usergroup" class="col-md-2 position: fixed;" >
+            <span  class="label label-primary" style="font-size: 2em; background-color:#2e6da4;">在線成员</span>
+            <div class="list-group"></div>
+        </div>
+    </div>
+    <div style="display: none;" id="privatechatbox" class="privatechatbox">
+        <div id="usergroup" class="col-md-2 position: fixed;" >
+            <span  class="label label-primary" style="font-size: 2em;background-color:#2e6da4;">聊天室</span>
+            <div class="list-group"></div>
+        </div>
+        <div class="col-md-8 chatwindow  ">
+            <div id="content" style="background-color:LightSlateGrey; opacity: 0.8;">
+                <div id="innerContent" ></div>
+            </div>
+            <div id="inputgrop">
+                <!-- 聊天室輸入匡 -->
+                <div class="col-md-10" >
+                    <input type="text" placeholder="saying somgthing" class="form-control chatinput" id="chatinput"> 
+                </div> 
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-primary " id="chatinputbutton">發送訊息</button>
+                </div>
+            </div>
+        </div>
+        <div id="usergroup" class="col-md-2 position: fixed;" >
+            <span  class="label label-primary" style="font-size: 2em; background-color:#2e6da4;">在線成员</span>
+            <div class="list-group"></div>
+        </div>
+    </div>
+
+</body>
+</html>

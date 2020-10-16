@@ -46,113 +46,102 @@ con.connect(function (err) {
     }
     console.log('connecting success');
 });
+
+// 從DB抓取過去聊天記錄
+app.get('/getdata', (req, res) => {
+    con.query('SELECT user.userName ,sendMessage.sendTime,sendMessage.message,sendMessage.touXiangUrl FROM user JOIN `sendMessage` ON sendMessage.whosend=user.userID ORDER BY `sendMessage`.`messageID` desc limit 10 ', function (error, results, fields) {
+        let sendmessage = JSON.stringify(results);//將SELECT出來的資料字串化
+        // console.log(sendmessage);
+        res.send(sendmessage);//回傳給mian.js
+    });
+});
  
 const users = [];// 用來存取使用者名稱
 let usersNum = 0;// 上線人數     
 const _sockets = [];// 將socket與使用者名稱對照
 
-/*socket*/
+/*有關socket事件邏輯*/
 // 'connection'->用來監聽127.0.0.1的連線次數
 io.on('connection',(socket)=>{
-    /**
-     * 所有有关socket事件的逻辑都在这里写
-     */
     usersNum ++;
-    console.log(`当前有${usersNum}个用户连接上服务器了`);
+    console.log(`當前有${usersNum}個用戶連接上伺服器了`);
     socket.on('login',(data)=>{
-        socket.username = data.username;//先保存在socket中
-        let UserTableInDB= [];
-        con.query('SELECT * FROM `user`',function(error, results, fields){
-            UserTableInDB =results;
-            console.log(UserTableInDB);
+        //先用socket判斷是否重複上限
+        //用sql判斷是否已成為會員，未成為會員者，才將入資料庫
+        con.query('SELECT * FROM `user` WHERE userName = ?',[data.username],function(error, results, fields){
+            if(results.length == 0){
+                con.query('INSERT INTO `user`(`userName`, `userPasswd`) VALUES (?,?)',[data.username,data.userpassword]);
+            }
+            
         });
-        // 循环数组判断用户名是否重复,如果重复，则触发usernameErr事件
-        // for (let user of UserTableInDB) {
-        //     if(user.userName === data.username){
-        //         console.log("o");
-        //         socket.emit('usernameErr',{err: '用户名重复'});
-        //         socket.username = null;//将用户名删除，之后的事件要判断用户名是否存在
-        //         break;
-        //     }
-        // }
-        /**
-         * 先保存在socket中
-         * 循环数组判断用户名是否重复,如果重复，则触发usernameErr事件
-         * 将用户名删除，之后的事件要判断用户名是否存在
-         */
-        socket.username = data.username;
+        socket.username = data.username;//將使用者輸入的名稱，存在socket中
+        //在用socket判斷是否重複上限
+        //判斷存在socket中的用戶名是否重複，如果重複，則觸發usernameErr事件
         for (let user of users) {
             if(user.username === data.username){
-                socket.emit('usernameErr',{err: '用户名重复'});
-                socket.username = null;
+                socket.emit('usernameErr',{err: '使用者名稱重複'});
+                socket.username = null;// 將用戶名刪除，之後事件要判斷用戶名是否存在
                 break;
             }
         }
 
-        //如果用户名存在。将该用户的信息存进数组中
+        //將該使用者的資料存入陣列中
         if(socket.username){
-
-            con.query('INSERT INTO `user` (userName) VALUES(?)',[socket.username], function(error, results, fields){
-
-            });
-
             users.push({
                 username: data.username,
                 message: [],
-                dataUrl: [],
-                touXiangUrl: data.touXiangUrl
+                dataUrl: [], 
+                touXiangUrl: data.touXiangUrl // 頭像
             });
-    
-            //保存socket
-            // _sockets[socket.username] = socket;
-            //然后触发loginSuccess事件告诉浏览器登陆成功了,广播形式触发
-            data.userGroup = users;         //将所有用户数组传过去
-            io.emit('loginSuccess',data);   //将data原封不动的再发给该浏览器
+           //然後觸發loginSuccess事件告訴瀏覽器登陸成功了,廣播形式觸發
+            data.userGroup = users;         // 將所有使用者資料陣列傳送過去main.js
+            io.emit('loginSuccess',data);   // 將data原封不動的再發給該瀏覽器
         }
-
-        //如果用户名存在。将该用户的信息存进数组中
-        // if(socket.username){
-        //     users.push({
-        //         username: data.username,
-        //         message: [],
-        //         dataUrl: [],
-        //         touXiangUrl: data.touXiangUrl
-        //     });
- 
-        //     //保存socket
-        //     _sockets[socket.username] = socket;
-        //     //然后触发loginSuccess事件告诉浏览器登陆成功了,广播形式触发
-        //     data.userGroup = users;         //将所有用户数组传过去
-        //     io.emit('loginSuccess',data);   //将data原封不动的再发给该浏览器
-        // }
- 
- 
     });
  
-    /**
-     * 监听sendMessage,我们得到客户端传过来的data里的message，并存起来。
-     * 我使用了ES6的for-of循环，和ES5 的for-in类似。
-     * for-in是得到每一个key，for-of 是得到每一个value
-     */
+    // 監聽sendMessage,我們得到客戶端(main.js)傳過來的data裡的message，並存起來
     socket.on('sendMessage',(data)=>{
-        for(let _user of users) {
+        for(let _user of users) {// for-in是得到每一個key，for-of 是得到每一個value
             if(_user.username === data.username) {
                 _user.message.push(data.message);
-                //信息存储之后触发receiveMessage将信息发给所有浏览器
-                io.emit('receiveMessage',data);
+
+                let moment = require('moment-timezone');
+                let time = moment(new Date()).tz("Asia/Taipei").format('YYYY-MM-DD HH:mm:ss');
+
+            
+                con.query('SELECT `userID` FROM `user` WHERE userName = ?',[data.username],function(error, results, fields){
+                    
+                    let postforDB = {
+                        whosend: results[0].userID,
+                        sendTime: time,
+                        message: data.message,
+                        touXiangUrl: data.touXiangUrl
+                        
+                    };
+                    console.log(postforDB);
+                    let sendMessage = con.query('INSERT INTO `sendMessage` SET ? ', postforDB);
+                });
+                let postmessage = {
+                    username: data.username,
+                    message: data.message,
+                    touXiangUrl: data.touXiangUrl,
+                    sendTime: time
+                    
+                };
+                console.log(postmessage);
+                // //訊息儲存之後觸發receiveMessage將資訊發給所有瀏覽器
+                io.emit('receiveMessage',postmessage);
                 break;
             }
         }
     });
  
-    /**
-     * 仿照sendMessage监听sendImg事件
-     */
+    // 仿照sendMessage監聽sendImg事件
     socket.on("sendImg",(data)=>{
         for(let _user of users) {
             if(_user.username === data.username) {
                 _user.dataUrl.push(data.dataUrl);
-                //存储后将图片广播给所有浏览器
+                // 存儲後將圖片廣播給所有瀏覽器
                 io.emit("receiveImg",data);
                 break;
             }
@@ -160,7 +149,7 @@ io.on('connection',(socket)=>{
     });
  
     socket.on('sendToOne',(data)=>{
-        //判断该用户是否存在，如果存在就触发receiveToOne事件
+        // 判断該使用者是否存在，如果存在就觸發receiveToOne事件
         for (let _user of users) {
             if (_user.username === data.to) {
                 _sockets[data.to].emit('receiveToOne',data);
@@ -168,18 +157,18 @@ io.on('connection',(socket)=>{
         }
     });
  
-    //断开连接后做的事情
-    socket.on('disconnect',()=>{          //注意，该事件不需要自定义触发器，系统会自动调用
+    // 斷線後，所做的事件
+    socket.on('disconnect',()=>{ // 注意，該事件不需要自定義觸發器，系統會自動呼叫
         usersNum --;
-        console.log(`当前有${usersNum}个用户连接上服务器了`);
+        console.log(`當前有${usersNum}個用戶連接上伺服器了`);
  
-        //触发用户离开的监听
+        // 觸發使用者離開的監聽
         socket.broadcast.emit("oneLeave",{username: socket.username});
  
-        //删除用户
+        // 删除使用者
         users.forEach(function (user,index) {
             if(user.username === socket.username) {
-                users.splice(index,1);       //找到该用户，删除
+                users.splice(index,1);       // 找到該使用者，删除
             }
         })
     })

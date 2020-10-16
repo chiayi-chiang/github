@@ -12,6 +12,7 @@
     <script src="http://at.alicdn.com/t/font_o86wdrgtu766r.js"></script>
 </head>
 <body>
+<!-- 登入頁面 -->
 <div id="loginbox">
     <h1>聊天室</h1>
     <hr>
@@ -19,65 +20,60 @@
         <div class="form-inline">
             <div class="form-group">
                 <label>使用者名稱</label>
-                <input type="text" class="form-control" id="userName" placeholder="请输入使用者名稱">
+                <input type="text" class="form-control" id="userName" placeholder="請輸入使用者名稱">
             </div>
             <br><br>
             <div class="form-group">
                 <label>使用者密碼</label>
-                <input type="text" class="form-control" id="userPassword" placeholder="请输入使用者密碼">
+                <input type="text" class="form-control" id="userPassword" placeholder="請輸入使用者密碼">
             </div>
             <br><br>
-            <button type="button" class="btn btn-info btn-lg" id="singupbutton">註冊</button>
             <button type="button" class="btn btn-info btn-lg" id="loginbutton">登入</button>
         </div>
     </div>
 </div>
-<!-- <div id="singupbox">
-    <h1>註冊</h1>
-    <hr>
-    <div class="login">
-        <div class="form-inline">
-            <div class="form-group">
-                <label>用户名</label>
-                <input type="text" class="form-control" id="name" placeholder="请输入用户名">
-            </div>
-            <br><br>
-            <button type="button" class="btn btn-info btn-lg" id="singupbutton">登录</button>
-        </div>
-    </div>
-</div> -->
 
 <div style="display: none;" id="chatbox">
-    <div id="usergroup" class="col-md-2">
-        <span  class="label label-primary" style="font-size: 2em;">在线成员</span>
+    
+    <div id="usergroup" class="col-md-2 ">
+        <span  class="label label-primary" style="font-size: 2em;">在線成员</span>
         <div class="list-group"></div>
     </div>
  
     <div class="col-md-9 chatwindow col-md-offset-1">
+        <!-- 顯示xxx歡迎的談話框 -->
         <div class="alert alert-info alert-dismissible fade in" role="alert" id="myalert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
         </div>
+        <!-- 上线提示框 -->
         <div class="alert alert-info alert-dismissible fade in" role="alert" id="myalert1">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
             <span></span>
         </div>
+        <!-- 下线提示框 -->
         <div class="alert alert-danger alert-dismissible fade in" role="alert" id="myalert2">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
             <span></span>
         </div>
+
         <div id="content"></div>
+
         <div id="inputgrop">
+            <!-- 聊天室輸入匡 -->
             <div class="col-md-10">
                 <input type="text" placeholder="saying somgthing" class="form-control chatinput" id="chatinput">
             </div>
+        <!-- 對話匡圖片 -->
             <form action="" style="display: none;" id="resetform"><input type="file" style="display: none" id="imginput"></form>
+            <!-- 插入圖片按鈕 -->
             <div class="col-md-2">
-                <button type="button" class="btn btn-primary" id="imgbutton">发送图片</button>
+                <button type="button" class="btn btn-primary" id="imgbutton">選擇圖片</button>
             </div>
         </div>
+
     </div>
  
-    <!-- 发送模态框（Modal） -->
+    <!-- 發送請求框（Modal） -->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -86,24 +82,24 @@
                         ×
                     </button>
                     <h4 class="modal-title" id="myModalLabel">
-                        模态框（Modal）标题
+                        發送請求
                     </h4>
                 </div>
                 <div class="modal-body">
                     <input type="text" placeholder="say something" class="form-control chatinput" id="inputtoone">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="closesendtoo">关闭
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="closesendtoo">取消
                     </button>
                     <button type="button" class="btn btn-primary" id="sendtoo">
-                        发送
+                        發送
                     </button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->
     </div>
  
-    <!-- 收到模态框（Modal） -->
+    <!-- 收到請求框（Modal） -->
     <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -112,7 +108,7 @@
                         ×
                     </button>
                     <h4 class="modal-title" id="myModalLabel1">
-                        模态框（Modal）标题
+                        收到請求
                     </h4>
                 </div>
                 <div class="modal-body shoudao">
@@ -120,7 +116,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal" id="closesendtoo">
-                        知道了
+                        同意
                     </button>
                 </div>
             </div><!-- /.modal-content -->
