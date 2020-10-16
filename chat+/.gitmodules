@@ -1,0 +1,9 @@
+[submodule "Work4/docker/nodedock"]
+	path = Work4/docker/nodedock
+	url = https://github.com/nodedock/nodedock.git
+[submodule "123/nodedock"]
+	path = 123/nodedock
+	url = https://github.com/nodedock/nodedock.git
+[submodule "22222/nodedock"]
+	path = 22222/nodedock
+	url = https://github.com/nodedock/nodedock.git

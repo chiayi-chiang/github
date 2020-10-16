@@ -1,0 +1,9 @@
+{
+    "editor.fontFamily": "Fira Code",
+    // "editor.fontFamily": "FiraCode-Retina",
+    "editor.fontLigatures": true,
+    // "editor.fontWeight": "300" // Light
+    // "editor.fontWeight": "400" // Regular
+    // "editor.fontWeight": "500" // Medium
+    // "editor.fontWeight": "600" // Bold
+}
